@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">WADirect</string>
+    <string name="label_phone_field_placeholder">Enter or paste phone number</string>
+    <string name="label_sub_title_text">You can now easily direct to WhatsApp without saving it\'s number!</string>
+    <string name="label_open_whatsapp">Open WhatsApp</string>
 </resources>
