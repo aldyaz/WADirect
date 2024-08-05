@@ -49,6 +49,11 @@ dependencies {
     implementation(libs.bundles.base)
     implementation(libs.bundles.compose)
     implementation(libs.hilt.android)
+    implementation(libs.bundles.net)
+    implementation(libs.bundles.coroutines)
+
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.noop)
 
     kapt(libs.hilt.compiler)
 

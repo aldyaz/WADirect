@@ -11,6 +11,11 @@ compose = "1.6.8"
 compose-material3 = "1.2.1"
 compose-activity = "1.9.1"
 hilt = "2.51.1"
+coroutines = "1.8.1"
+retrofit = "2.9.0"
+okhttp = "4.12.0"
+gson = "2.10.1"
+chucker = "4.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +35,15 @@ compose-material-icon = { module = "androidx.compose.material:material-icons-ext
 hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+chucker = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chucker-noop = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -41,3 +55,5 @@ base = ["androidx-core-ktx", "androidx-appcompat", "material"]
 compose = ["compose-ui", "compose-ui-tooling", "compose-ui-tooling-preview",
     "compose-material3", "compose-foundation", "compose-runtime",
     "compose-activity", "compose-material-icon"]
+coroutines = ["coroutines-core", "coroutines-android"]
+net = ["retrofit", "retrofit-converter-gson", "okhttp3", "okhttp3-logging-interceptor", "gson"]
