@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.ui.textfield
+package com.aldyaz.wadirect.ui.common.textfield
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable

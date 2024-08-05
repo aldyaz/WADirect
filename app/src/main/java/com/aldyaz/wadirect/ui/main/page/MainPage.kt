@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.main.page
+package com.aldyaz.wadirect.ui.main.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.aldyaz.wadirect.R
-import com.aldyaz.wadirect.main.component.MainPhoneTextField
-import com.aldyaz.wadirect.ui.model.PhoneTextFieldState
+import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
+import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
 
 @Composable
 fun MainPage() {

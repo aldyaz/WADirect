@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.ui
+package com.aldyaz.wadirect.ui.common
 
 import androidx.compose.ui.graphics.Color
 

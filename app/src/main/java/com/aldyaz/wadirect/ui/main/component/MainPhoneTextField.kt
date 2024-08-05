@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.aldyaz.wadirect.main.component
+package com.aldyaz.wadirect.ui.main.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.aldyaz.wadirect.ui.model.PhoneTextFieldState
-import com.aldyaz.wadirect.ui.textfield.PhoneTextField
+import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
+import com.aldyaz.wadirect.ui.common.textfield.PhoneTextField
 
 @Composable
 fun MainPhoneTextField(

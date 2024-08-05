@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.ui.model
+package com.aldyaz.wadirect.ui.common.model
 
 class PhoneTextFieldState : TextFieldState(
     validator = ::isValidPhoneNumber,

@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.ui
+package com.aldyaz.wadirect.ui.common
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

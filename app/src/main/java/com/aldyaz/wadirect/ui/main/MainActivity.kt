@@ -1,10 +1,10 @@
-package com.aldyaz.wadirect.main
+package com.aldyaz.wadirect.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.aldyaz.wadirect.main.page.MainPage
-import com.aldyaz.wadirect.ui.WADirectTheme
+import com.aldyaz.wadirect.ui.main.page.MainPage
+import com.aldyaz.wadirect.ui.common.WADirectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

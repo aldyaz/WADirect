@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.main
+package com.aldyaz.wadirect.ui.main
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

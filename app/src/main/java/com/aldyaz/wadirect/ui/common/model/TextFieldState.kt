@@ -1,4 +1,4 @@
-package com.aldyaz.wadirect.ui.model
+package com.aldyaz.wadirect.ui.common.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
