@@ -26,17 +26,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aldyaz.wadirect.R
+import com.aldyaz.wadirect.presentation.model.MainState
+import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
 import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
 import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
 
 @Composable
-fun MainPage() {
-    MainScaffold()
+fun MainPage(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    MainScaffold(state)
 }
 
 @Composable
-private fun MainScaffold() {
+private fun MainScaffold(
+    state: MainState
+) {
     Scaffold { contentPadding ->
         MainContent(
             modifier = Modifier

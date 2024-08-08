@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 android {
