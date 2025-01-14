@@ -3,11 +3,13 @@ package com.aldyaz.wadirect.ui.main.page
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -29,25 +31,34 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aldyaz.wadirect.R
+import com.aldyaz.wadirect.presentation.model.CountryCodePresentationModel
+import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.model.MainState
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
-import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
 import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
+import com.aldyaz.wadirect.ui.main.component.CountryCodeDropDown
+import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
 
 @Composable
 fun MainPage(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    MainScaffold(state)
+    MainScaffold(
+        state = state,
+        onIntent = viewModel::onIntentReceived
+    )
 }
 
 @Composable
 private fun MainScaffold(
-    state: MainState
+    state: MainState,
+    onIntent: (MainIntent) -> Unit
 ) {
     Scaffold { contentPadding ->
         MainContent(
+            state = state,
+            onIntent = onIntent,
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxSize()
@@ -57,6 +68,8 @@ private fun MainScaffold(
 
 @Composable
 private fun MainContent(
+    state: MainState,
+    onIntent: (MainIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -81,12 +94,33 @@ private fun MainContent(
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MainPhoneTextField(
-                    phoneTextFieldState = phoneTextState,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
-                )
+                ) {
+                    CountryCodeDropDown(
+                        countryCode = state.countryCode,
+                        countryCodes = state.countryCodes,
+                        expanded = state.isChoosingCountryCode,
+                        onClick = {
+                            onIntent(MainIntent.OpenCountryCodeDropDown)
+                        },
+                        onDismiss = {
+                            onIntent(MainIntent.DismissCountryCodeDropDown)
+                        },
+                        onSelect = {
+                            onIntent(MainIntent.SelectCountryCode(it))
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    MainPhoneTextField(
+                        phoneTextFieldState = phoneTextState,
+                        modifier = Modifier.weight(2f)
+                    )
+                }
                 OutlinedButton(
                     onClick = {},
                     enabled = false,
@@ -112,6 +146,37 @@ private fun MainContent(
 @Composable
 private fun MainContentPreview() {
     MainContent(
+        state = MainState(
+            loading = false,
+            error = false,
+            countryCodes = listOf(
+                CountryCodePresentationModel(
+                    name = "Afghanistan",
+                    dialCode = "+93",
+                    emoji = "🇦🇫",
+                    code = "AF"
+                ),
+                CountryCodePresentationModel(
+                    name = "Aland Islands",
+                    dialCode = "+358",
+                    emoji = "🇦🇽",
+                    code = "AX"
+                ),
+                CountryCodePresentationModel(
+                    name = "Albania",
+                    dialCode = "+355",
+                    emoji = "🇦🇱",
+                    code = "AL"
+                ),
+                CountryCodePresentationModel(
+                    name = "Algeria",
+                    dialCode = "+213",
+                    emoji = "🇩🇿",
+                    code = "DZ"
+                )
+            )
+        ),
+        onIntent = {},
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)

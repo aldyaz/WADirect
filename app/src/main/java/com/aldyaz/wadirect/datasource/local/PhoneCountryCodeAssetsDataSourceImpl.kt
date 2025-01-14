@@ -1,6 +1,5 @@
 package com.aldyaz.wadirect.datasource.local
 
-import com.aldyaz.wadirect.datasource.model.CountryCodeDto
 import com.aldyaz.wadirect.datasource.model.CountryPhoneCodeDto
 import com.aldyaz.wadirect.utils.AssetsLoader
 import kotlinx.serialization.json.Json

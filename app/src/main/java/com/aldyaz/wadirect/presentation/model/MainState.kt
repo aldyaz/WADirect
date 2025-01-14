@@ -1,14 +1,19 @@
 package com.aldyaz.wadirect.presentation.model
 
-import com.aldyaz.wadirect.domain.model.CountryCodeDomainModel
-
 data class MainState(
     val loading: Boolean = true,
     val error: Boolean = false,
-    val countryCodes: List<CountryCodeDomainModel> = listOf()
+    val isChoosingCountryCode: Boolean = false,
+    val countryCode: CountryCodePresentationModel = CountryCodePresentationModel(
+        name = "Indonesia",
+        dialCode = "+62",
+        emoji = "🇮🇩",
+        code = "ID"
+    ),
+    val countryCodes: List<CountryCodePresentationModel> = listOf()
 ) {
 
     companion object {
-        val Initial = MainState()
+        val INITIAL = MainState()
     }
 }

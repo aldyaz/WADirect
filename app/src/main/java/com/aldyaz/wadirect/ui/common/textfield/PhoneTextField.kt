@@ -25,7 +25,7 @@ fun PhoneTextField(
     modifier = modifier,
     value = value,
     onValueChange = onValueChange,
-    label = label,
+    placeholder = label,
     showError = showError,
     errorText = errorText,
     keyboardOptions = keyboardOptions,

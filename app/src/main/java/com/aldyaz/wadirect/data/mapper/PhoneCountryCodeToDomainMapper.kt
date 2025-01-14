@@ -10,7 +10,8 @@ class PhoneCountryCodeToDomainMapper : (CountryPhoneCodeDto) -> List<CountryCode
             CountryCodeDomainModel(
                 name = countryCodeDto.name.orEmpty(),
                 dialCode = countryCodeDto.dialCode.orEmpty(),
-                emoji = countryCodeDto.emoji.orEmpty()
+                emoji = countryCodeDto.emoji.orEmpty(),
+                code = countryCodeDto.code.orEmpty()
             )
         }.orEmpty()
     }
