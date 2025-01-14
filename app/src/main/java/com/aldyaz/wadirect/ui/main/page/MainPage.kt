@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.aldyaz.wadirect.ui.main.page
 
 import androidx.compose.foundation.background
@@ -5,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,14 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,8 +44,10 @@ import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.model.MainState
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
 import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
-import com.aldyaz.wadirect.ui.main.component.CountryCodeDropDown
+import com.aldyaz.wadirect.ui.main.component.CountryCodeBottomSheet
+import com.aldyaz.wadirect.ui.main.component.CountryCodeButton
 import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainPage(
@@ -55,6 +65,11 @@ private fun MainScaffold(
     state: MainState,
     onIntent: (MainIntent) -> Unit
 ) {
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val bottomSheetScope = rememberCoroutineScope()
+
     Scaffold { contentPadding ->
         MainContent(
             state = state,
@@ -63,6 +78,30 @@ private fun MainScaffold(
                 .padding(contentPadding)
                 .fillMaxSize()
         )
+
+        if (state.isChoosingCountryCode) {
+            ModalBottomSheet(
+                sheetState = bottomSheetState,
+                onDismissRequest = {
+                    onIntent(MainIntent.DismissCountryCodeBottomSheet)
+                },
+                content = {
+                    CountryCodeBottomSheet(
+                        countryCodes = state.countryCodes,
+                        onClickItem = { country ->
+                            bottomSheetScope.launch {
+                                onIntent(MainIntent.SelectCountryCode(country))
+                                bottomSheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!bottomSheetState.isVisible) {
+                                    onIntent(MainIntent.DismissCountryCodeBottomSheet)
+                                }
+                            }
+                        }
+                    )
+                }
+            )
+        }
     }
 }
 
@@ -100,20 +139,15 @@ private fun MainContent(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    CountryCodeDropDown(
+                    CountryCodeButton(
                         countryCode = state.countryCode,
-                        countryCodes = state.countryCodes,
-                        expanded = state.isChoosingCountryCode,
                         onClick = {
-                            onIntent(MainIntent.OpenCountryCodeDropDown)
+                            onIntent(MainIntent.OpenCountryCodeBottomSheet)
                         },
-                        onDismiss = {
-                            onIntent(MainIntent.DismissCountryCodeDropDown)
-                        },
-                        onSelect = {
-                            onIntent(MainIntent.SelectCountryCode(it))
-                        },
-                        modifier = Modifier.weight(1f)
+                        expanded = state.isChoosingCountryCode,
+                        modifier = Modifier
+                            .defaultMinSize(minHeight = OutlinedTextFieldDefaults.MinHeight)
+                            .weight(1f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     MainPhoneTextField(

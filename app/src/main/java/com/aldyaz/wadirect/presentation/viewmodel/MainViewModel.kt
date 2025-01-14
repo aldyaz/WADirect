@@ -29,7 +29,9 @@ class MainViewModel @Inject constructor(
     ) { state, countryCodesResult ->
         when (countryCodesResult) {
             is ResultState.Success -> {
-                val data = countryCodesResult.data.map(countryCodeToPresentationMapper)
+                val data = List(countryCodesResult.data.size) {
+                    countryCodeToPresentationMapper(countryCodesResult.data[it])
+                }
                 if (state.countryCodes != data) {
                     state.copy(
                         loading = true,
@@ -56,7 +58,7 @@ class MainViewModel @Inject constructor(
 
     override fun onIntentReceived(intent: MainIntent) {
         when (intent) {
-            is MainIntent.OpenCountryCodeDropDown -> {
+            is MainIntent.OpenCountryCodeBottomSheet -> {
                 _state.update {
                     it.copy(
                         isChoosingCountryCode = true
@@ -64,7 +66,7 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            is MainIntent.DismissCountryCodeDropDown -> {
+            is MainIntent.DismissCountryCodeBottomSheet -> {
                 _state.update {
                     it.copy(
                         isChoosingCountryCode = false
@@ -75,7 +77,6 @@ class MainViewModel @Inject constructor(
             is MainIntent.SelectCountryCode -> {
                 _state.update {
                     it.copy(
-                        isChoosingCountryCode = false,
                         countryCode = intent.countryCode
                     )
                 }
