@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.jetbrainsCompose)
     id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
     kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
@@ -48,15 +49,28 @@ android {
 dependencies {
 
     implementation(libs.bundles.base)
-    implementation(libs.bundles.compose)
     implementation(libs.hilt.android)
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.ktor)
+    implementation(libs.bundles.room)
+
+    implementation(compose.ui)
+    implementation(compose.uiTooling)
+    implementation(compose.preview)
+    implementation(compose.material3)
+    implementation(compose.foundation)
+    implementation(compose.runtime)
+    implementation(compose.materialIconsExtended)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.hilt.navigation)
+    implementation(libs.compose.lifecycle.viewmodel)
+    implementation(libs.compose.lifecycle.runtime)
 
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.noop)
 
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
 
