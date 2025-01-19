@@ -10,4 +10,9 @@ sealed class MainIntent {
         val countryCode: CountryCodePresentationModel
     ) : MainIntent()
 
+    data class PhoneSubmission(
+        val countryCode: CountryCodePresentationModel,
+        val phone: String
+    ) : MainIntent()
+
 }

@@ -10,7 +10,9 @@ data class MainState(
         emoji = "🇮🇩",
         code = "ID"
     ),
-    val countryCodes: List<CountryCodePresentationModel> = listOf()
+    val countryCodes: List<CountryCodePresentationModel> = listOf(),
+    val phone: String = "",
+    val cleanedPhone: String = ""
 ) {
 
     companion object {

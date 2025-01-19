@@ -1,5 +1,6 @@
 package com.aldyaz.wadirect.di
 
+import com.aldyaz.wadirect.domain.interactor.FormatPhoneOnlyUseCase
 import com.aldyaz.wadirect.domain.interactor.GetPhoneCountryCodesUseCase
 import com.aldyaz.wadirect.domain.interactor.GetSentHistories
 import com.aldyaz.wadirect.domain.repository.PhoneCountryCodeRepository
@@ -24,5 +25,8 @@ class DomainModule {
     fun provideGetSentHistories(
         repository: PhoneHistoryRepository
     ): GetSentHistories = GetSentHistories(repository)
+
+    @Provides
+    fun provideFormatPhoneOnlyUseCase(): FormatPhoneOnlyUseCase = FormatPhoneOnlyUseCase()
 
 }

@@ -54,6 +54,7 @@ fun MainPage(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     MainScaffold(
         state = state,
         onIntent = viewModel::onIntentReceived
@@ -156,8 +157,15 @@ private fun MainContent(
                     )
                 }
                 OutlinedButton(
-                    onClick = {},
-                    enabled = false,
+                    onClick = {
+                        onIntent(
+                            MainIntent.PhoneSubmission(
+                                countryCode = state.countryCode,
+                                phone = phoneTextState.text
+                            )
+                        )
+                    },
+                    enabled = true,
                     border = null,
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = colorResource(R.color._128c7e),
