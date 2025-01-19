@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -116,7 +117,8 @@ private fun MainContent(
         modifier = Modifier
             .then(modifier)
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Center,
         content = {
             val phoneTextState by remember {
@@ -165,7 +167,7 @@ private fun MainContent(
                             )
                         )
                     },
-                    enabled = true,
+                    enabled = phoneTextState.text.isNotBlank(),
                     border = null,
                     colors = ButtonDefaults.outlinedButtonColors(
                         containerColor = colorResource(R.color._128c7e),
