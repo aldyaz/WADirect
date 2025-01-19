@@ -1,21 +1,19 @@
 package com.aldyaz.wadirect.data.mapper
 
-import com.aldyaz.wadirect.datasource.model.CountryPhoneCodeDto
+import com.aldyaz.wadirect.datasource.model.CountryCodeDto
 import com.aldyaz.wadirect.domain.model.CountryCodeDomainModel
 
-class PhoneCountryCodeToDomainMapper : (CountryPhoneCodeDto) -> List<CountryCodeDomainModel> {
+class PhoneCountryCodeToDomainMapper : (List<CountryCodeDto>) -> List<CountryCodeDomainModel> {
 
-    override fun invoke(p1: CountryPhoneCodeDto): List<CountryCodeDomainModel> {
-        return p1.countryPhoneCodes?.let { items ->
-            List(items.size) {
-                val item = items[it]
-                CountryCodeDomainModel(
-                    name = item.name.orEmpty(),
-                    dialCode = item.dialCode.orEmpty(),
-                    emoji = item.emoji.orEmpty(),
-                    code = item.code.orEmpty()
-                )
-            }
-        } ?: emptyList()
+    override fun invoke(p1: List<CountryCodeDto>): List<CountryCodeDomainModel> {
+        return List(p1.size) {
+            val item = p1[it]
+            CountryCodeDomainModel(
+                name = item.name.orEmpty(),
+                dialCode = item.dialCode.orEmpty(),
+                emoji = item.emoji.orEmpty(),
+                code = item.code.orEmpty()
+            )
+        }
     }
 }
