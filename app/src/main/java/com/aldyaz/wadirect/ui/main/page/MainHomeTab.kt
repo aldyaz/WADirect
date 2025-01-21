@@ -100,7 +100,7 @@ fun MainHomeTabContent(
                             .defaultMinSize(minHeight = OutlinedTextFieldDefaults.MinHeight)
                             .weight(1f)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     MainPhoneTextField(
                         phoneTextFieldState = phoneTextState,
                         modifier = Modifier.weight(2f)
@@ -118,10 +118,10 @@ fun MainHomeTabContent(
                     enabled = phoneTextState.text.isNotBlank(),
                     border = null,
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = colorResource(R.color._128c7e),
-                        contentColor = Color.White,
-                        disabledContainerColor = colorResource(R.color._c0c2c3),
-                        disabledContentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledContentColor = MaterialTheme.colorScheme.surfaceBright
                     ),
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
