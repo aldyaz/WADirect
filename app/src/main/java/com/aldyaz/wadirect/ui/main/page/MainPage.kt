@@ -2,52 +2,39 @@
 
 package com.aldyaz.wadirect.ui.main.page
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aldyaz.wadirect.R
-import com.aldyaz.wadirect.presentation.model.CountryCodePresentationModel
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.model.MainState
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
-import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
 import com.aldyaz.wadirect.ui.main.component.CountryCodeBottomSheet
-import com.aldyaz.wadirect.ui.main.component.CountryCodeButton
-import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
+import com.aldyaz.wadirect.ui.main.model.MainBottomNavTabPage
 import kotlinx.coroutines.launch
 
 @Composable
@@ -71,158 +58,105 @@ private fun MainScaffold(
         skipPartiallyExpanded = true
     )
     val bottomSheetScope = rememberCoroutineScope()
+    val navController = rememberNavController()
 
-    Scaffold { contentPadding ->
-        MainContent(
-            state = state,
-            onIntent = onIntent,
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()
-        )
+    Scaffold(
+        bottomBar = {
+            MainBottomBar(
+                navController = navController,
+                tabs = arrayOf(
+                    MainBottomNavTabPage.HomeTabPage,
+                    MainBottomNavTabPage.HistoryTabPage
+                )
+            )
+        },
+        content = { contentPadding ->
+            MainContent(
+                navController = navController,
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxSize()
+            )
 
-        if (state.isChoosingCountryCode) {
-            ModalBottomSheet(
-                sheetState = bottomSheetState,
-                onDismissRequest = {
-                    onIntent(MainIntent.DismissCountryCodeBottomSheet)
-                },
-                content = {
-                    CountryCodeBottomSheet(
-                        countryCodes = state.countryCodes,
-                        onClickItem = { country ->
-                            bottomSheetScope.launch {
-                                onIntent(MainIntent.SelectCountryCode(country))
-                                bottomSheetState.hide()
-                            }.invokeOnCompletion {
-                                if (!bottomSheetState.isVisible) {
-                                    onIntent(MainIntent.DismissCountryCodeBottomSheet)
+            if (state.isChoosingCountryCode) {
+                ModalBottomSheet(
+                    sheetState = bottomSheetState,
+                    onDismissRequest = {
+                        onIntent(MainIntent.DismissCountryCodeBottomSheet)
+                    },
+                    content = {
+                        CountryCodeBottomSheet(
+                            countryCodes = state.countryCodes,
+                            onClickItem = { country ->
+                                bottomSheetScope.launch {
+                                    onIntent(MainIntent.SelectCountryCode(country))
+                                    bottomSheetState.hide()
+                                }.invokeOnCompletion {
+                                    if (!bottomSheetState.isVisible) {
+                                        onIntent(MainIntent.DismissCountryCodeBottomSheet)
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-            )
+                        )
+                    }
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun MainContent(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = MainHomeTabScreen,
+        enterTransition = { fadeIn(animationSpec = tween(500)) },
+        exitTransition = { fadeOut(animationSpec = tween(500)) },
+        modifier = modifier
+    ) {
+        composable<MainHomeTabScreen> {
+            MainHomeTab()
+        }
+
+        composable<MainHistoryTabScreen> {
+            MainHistoryTab()
         }
     }
 }
 
 @Composable
-private fun MainContent(
-    state: MainState,
-    onIntent: (MainIntent) -> Unit,
-    modifier: Modifier = Modifier
+fun MainBottomBar(
+    navController: NavController,
+    tabs: Array<MainBottomNavTabPage>
 ) {
-    Column(
-        modifier = Modifier
-            .then(modifier)
-            .fillMaxSize()
-            .padding(16.dp)
-            .imePadding(),
-        verticalArrangement = Arrangement.Center,
-        content = {
-            val phoneTextState by remember {
-                mutableStateOf(PhoneTextFieldState())
-            }
-            Text(
-                text = stringResource(R.string.label_sub_title_text),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+    NavigationBar {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        tabs.forEach { page ->
+            NavigationBarItem(
+                selected = currentDestination?.hierarchy?.any { it.route == page.route } == true,
+                onClick = {
+                    navController.navigate(page.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = page.type.icon,
+                        contentDescription = stringResource(page.type.title)
+                    )
+                },
+                label = {
+                    Text(stringResource(page.type.title))
+                }
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    CountryCodeButton(
-                        countryCode = state.countryCode,
-                        onClick = {
-                            onIntent(MainIntent.OpenCountryCodeBottomSheet)
-                        },
-                        expanded = state.isChoosingCountryCode,
-                        modifier = Modifier
-                            .defaultMinSize(minHeight = OutlinedTextFieldDefaults.MinHeight)
-                            .weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    MainPhoneTextField(
-                        phoneTextFieldState = phoneTextState,
-                        modifier = Modifier.weight(2f)
-                    )
-                }
-                OutlinedButton(
-                    onClick = {
-                        onIntent(
-                            MainIntent.PhoneSubmission(
-                                countryCode = state.countryCode,
-                                phone = phoneTextState.text
-                            )
-                        )
-                    },
-                    enabled = phoneTextState.text.isNotBlank(),
-                    border = null,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = colorResource(R.color._128c7e),
-                        contentColor = Color.White,
-                        disabledContainerColor = colorResource(R.color._c0c2c3),
-                        disabledContentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                ) {
-                    Text(text = stringResource(R.string.label_open_whatsapp))
-                }
-            }
         }
-    )
-}
-
-@Preview
-@Composable
-private fun MainContentPreview() {
-    MainContent(
-        state = MainState(
-            loading = false,
-            error = false,
-            countryCodes = listOf(
-                CountryCodePresentationModel(
-                    name = "Afghanistan",
-                    dialCode = "+93",
-                    emoji = "🇦🇫",
-                    code = "AF"
-                ),
-                CountryCodePresentationModel(
-                    name = "Aland Islands",
-                    dialCode = "+358",
-                    emoji = "🇦🇽",
-                    code = "AX"
-                ),
-                CountryCodePresentationModel(
-                    name = "Albania",
-                    dialCode = "+355",
-                    emoji = "🇦🇱",
-                    code = "AL"
-                ),
-                CountryCodePresentationModel(
-                    name = "Algeria",
-                    dialCode = "+213",
-                    emoji = "🇩🇿",
-                    code = "DZ"
-                )
-            )
-        ),
-        onIntent = {},
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    )
+    }
 }

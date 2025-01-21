@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.compose.hilt.navigation)
     implementation(libs.compose.lifecycle.viewmodel)
     implementation(libs.compose.lifecycle.runtime)
+    implementation(libs.compose.navigation)
 
     debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.noop)
