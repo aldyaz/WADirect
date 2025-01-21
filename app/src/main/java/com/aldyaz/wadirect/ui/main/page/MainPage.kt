@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -137,7 +138,7 @@ fun MainBottomBar(
         val currentDestination = navBackStackEntry?.destination
         tabs.forEach { page ->
             NavigationBarItem(
-                selected = currentDestination?.hierarchy?.any { it.route == page.route } == true,
+                selected = currentDestination?.hierarchy?.any { it.hasRoute(page.route::class) } == true,
                 onClick = {
                     navController.navigate(page.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
