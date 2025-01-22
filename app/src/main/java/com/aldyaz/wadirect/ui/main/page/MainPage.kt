@@ -2,6 +2,8 @@
 
 package com.aldyaz.wadirect.ui.main.page
 
+import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,15 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,34 +32,40 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.aldyaz.wadirect.presentation.model.MainIntent
-import com.aldyaz.wadirect.presentation.model.MainState
+import com.aldyaz.wadirect.di.PlatformEntryPoint
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
-import com.aldyaz.wadirect.ui.main.component.CountryCodeBottomSheet
 import com.aldyaz.wadirect.ui.main.model.MainBottomNavTabPage
-import kotlinx.coroutines.launch
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun MainPage(
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val activity = LocalActivity.current
+    var platformEntryPoint: PlatformEntryPoint? = null
+    if (activity != null) {
+        platformEntryPoint = remember {
+            EntryPointAccessors.fromActivity(activity, PlatformEntryPoint::class.java)
+        }
+    }
+    val whatsAppLaunchManager = platformEntryPoint?.whatsAppLaunchManager()
 
-    MainScaffold(
-        state = state,
-        onIntent = viewModel::onIntentReceived
-    )
+    val phone by viewModel.phone.collectAsStateWithLifecycle()
+
+    LaunchedEffect(phone) {
+        if (phone.isNotEmpty()) {
+            val isLaunched = whatsAppLaunchManager?.launch(phone)
+            Toast.makeText(activity, if (isLaunched == true) "Launched!" else "Not launched!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    MainScaffold(hiltViewModel())
 }
 
 @Composable
 private fun MainScaffold(
-    state: MainState,
-    onIntent: (MainIntent) -> Unit
+    sharedViewModel: MainViewModel
 ) {
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    val bottomSheetScope = rememberCoroutineScope()
     val navController = rememberNavController()
 
     Scaffold(
@@ -74,34 +81,11 @@ private fun MainScaffold(
         content = { contentPadding ->
             MainContent(
                 navController = navController,
+                sharedViewModel = sharedViewModel,
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
             )
-
-            if (state.isChoosingCountryCode) {
-                ModalBottomSheet(
-                    sheetState = bottomSheetState,
-                    onDismissRequest = {
-                        onIntent(MainIntent.DismissCountryCodeBottomSheet)
-                    },
-                    content = {
-                        CountryCodeBottomSheet(
-                            countryCodes = state.countryCodes,
-                            onClickItem = { country ->
-                                bottomSheetScope.launch {
-                                    onIntent(MainIntent.SelectCountryCode(country))
-                                    bottomSheetState.hide()
-                                }.invokeOnCompletion {
-                                    if (!bottomSheetState.isVisible) {
-                                        onIntent(MainIntent.DismissCountryCodeBottomSheet)
-                                    }
-                                }
-                            }
-                        )
-                    }
-                )
-            }
         }
     )
 }
@@ -109,20 +93,24 @@ private fun MainScaffold(
 @Composable
 private fun MainContent(
     navController: NavHostController,
+    sharedViewModel: MainViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
         startDestination = MainHomeTabScreen,
+        route = MainParentScreen::class,
         enterTransition = { fadeIn(animationSpec = tween(500)) },
         exitTransition = { fadeOut(animationSpec = tween(500)) },
         modifier = modifier
     ) {
         composable<MainHomeTabScreen> {
-            MainHomeTab()
+            MainHomeTab(
+                sharedViewModel = sharedViewModel
+            )
         }
 
-        composable<MainHistoryTabScreen> {
+        composable<MainHistoryTabScreen> { backStackEntry ->
             MainHistoryTab()
         }
     }

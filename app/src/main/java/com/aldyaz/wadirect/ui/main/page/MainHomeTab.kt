@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.aldyaz.wadirect.ui.main.page
 
 import androidx.compose.foundation.background
@@ -14,18 +16,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,23 +42,62 @@ import com.aldyaz.wadirect.R
 import com.aldyaz.wadirect.presentation.model.CountryCodePresentationModel
 import com.aldyaz.wadirect.presentation.model.MainHomeTabIntent
 import com.aldyaz.wadirect.presentation.model.MainHomeTabState
+import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.viewmodel.MainHomeTabViewModel
+import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
 import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
+import com.aldyaz.wadirect.ui.main.component.CountryCodeBottomSheet
 import com.aldyaz.wadirect.ui.main.component.CountryCodeButton
 import com.aldyaz.wadirect.ui.main.component.MainPhoneTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainHomeTab(
+    sharedViewModel: MainViewModel,
     modifier: Modifier = Modifier,
     viewModel: MainHomeTabViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
+    val bottomSheetScope = rememberCoroutineScope()
+
+    LaunchedEffect(state.cleanedPhone) {
+        if (state.cleanedPhone.isNotEmpty()) {
+            sharedViewModel.onIntentReceived(MainIntent.LaunchWhatsApp(state.cleanedPhone))
+        }
+    }
 
     MainHomeTabContent(
         state = state,
         onIntent = viewModel::onIntentReceived,
         modifier = modifier
     )
+
+    if (state.isChoosingCountryCode) {
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                viewModel.onIntentReceived(MainHomeTabIntent.DismissCountryCodeBottomSheet)
+            },
+            content = {
+                CountryCodeBottomSheet(
+                    countryCodes = state.countryCodes,
+                    onClickItem = { country ->
+                        bottomSheetScope.launch {
+                            viewModel.onIntentReceived(MainHomeTabIntent.SelectCountryCode(country))
+                            bottomSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!bottomSheetState.isVisible) {
+                                viewModel.onIntentReceived(MainHomeTabIntent.DismissCountryCodeBottomSheet)
+                            }
+                        }
+                    }
+                )
+            }
+        )
+    }
 }
 
 @Composable
