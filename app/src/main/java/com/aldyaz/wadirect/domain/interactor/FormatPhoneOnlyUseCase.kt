@@ -10,18 +10,19 @@ class FormatPhoneOnlyUseCase : FlowUseCase<FormatPhoneParamDomainModel, String>(
     override fun execute(param: FormatPhoneParamDomainModel): Flow<String> = flow {
         val dialCode = param.dialCode
         val phonePattern = Regex("^(\\+${dialCode})(\\d+)")
+        val numberOnlyPattern = Regex("\\D")
         val phone = param.phone
         if (phonePattern.matches(phone)) {
-            emit(phone)
+            val newPhone = phone.replace(numberOnlyPattern, "")
+            emit(newPhone)
         } else {
-            val numberOnlyPattern = Regex("\\D")
             val cleanDialCode = dialCode.replace(numberOnlyPattern, "")
             val newPhone = phone.replace(numberOnlyPattern, "")
             val initialPhone = newPhone.substring(0, cleanDialCode.length)
             if (initialPhone == cleanDialCode) {
                 emit(newPhone)
             } else {
-                emit("$dialCode$newPhone")
+                emit("$cleanDialCode$newPhone")
             }
         }
     }

@@ -16,6 +16,6 @@ class WhatsAppLaunchManagerImpl(
     }
 
     companion object {
-        fun whatsAppUrl(phone: String) = "https://api.whatsapp.com/send?phone$phone"
+        fun whatsAppUrl(phone: String) = "https://api.whatsapp.com/send?phone=$phone"
     }
 }
