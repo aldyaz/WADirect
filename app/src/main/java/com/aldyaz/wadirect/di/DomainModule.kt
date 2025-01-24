@@ -2,7 +2,8 @@ package com.aldyaz.wadirect.di
 
 import com.aldyaz.wadirect.domain.interactor.FormatPhoneOnlyUseCase
 import com.aldyaz.wadirect.domain.interactor.GetPhoneCountryCodesUseCase
-import com.aldyaz.wadirect.domain.interactor.GetSentHistories
+import com.aldyaz.wadirect.domain.interactor.GetSentHistoriesUseCase
+import com.aldyaz.wadirect.domain.interactor.SavePhoneToHistoryUseCase
 import com.aldyaz.wadirect.domain.repository.PhoneCountryCodeRepository
 import com.aldyaz.wadirect.domain.repository.PhoneHistoryRepository
 import dagger.Module
@@ -24,9 +25,14 @@ class DomainModule {
     @Provides
     fun provideGetSentHistories(
         repository: PhoneHistoryRepository
-    ): GetSentHistories = GetSentHistories(repository)
+    ): GetSentHistoriesUseCase = GetSentHistoriesUseCase(repository)
 
     @Provides
     fun provideFormatPhoneOnlyUseCase(): FormatPhoneOnlyUseCase = FormatPhoneOnlyUseCase()
+
+    @Provides
+    fun provideSavePhoneToHistoryUseCase(
+        repository: PhoneHistoryRepository
+    ): SavePhoneToHistoryUseCase = SavePhoneToHistoryUseCase(repository)
 
 }

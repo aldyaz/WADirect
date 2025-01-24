@@ -11,4 +11,8 @@ class PhoneHistoryLocalDataSourceImpl(
     override fun getHistories(): Flow<List<HistoryDb>> {
         return historyDao.getHistories()
     }
+
+    override fun savePhone(history: HistoryDb) {
+        historyDao.savePhone(history)
+    }
 }

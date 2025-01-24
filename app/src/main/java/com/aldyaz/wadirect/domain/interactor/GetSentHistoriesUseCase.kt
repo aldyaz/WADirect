@@ -5,7 +5,7 @@ import com.aldyaz.wadirect.domain.model.HistoryDomainModel
 import com.aldyaz.wadirect.domain.repository.PhoneHistoryRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetSentHistories(
+class GetSentHistoriesUseCase(
     private val phoneHistoryRepository: PhoneHistoryRepository
 ) : FlowUseCase<Unit, List<HistoryDomainModel>>() {
 

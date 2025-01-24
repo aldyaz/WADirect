@@ -7,4 +7,6 @@ interface PhoneHistoryLocalDataSource {
 
     fun getHistories(): Flow<List<HistoryDb>>
 
+    fun savePhone(history: HistoryDb)
+
 }
