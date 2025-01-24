@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -107,6 +108,7 @@ fun MainHomeTabContent(
     onIntent: (MainHomeTabIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .then(modifier)
@@ -115,9 +117,6 @@ fun MainHomeTabContent(
             .imePadding(),
         verticalArrangement = Arrangement.Center,
         content = {
-            val phoneTextState by remember {
-                mutableStateOf(PhoneTextFieldState())
-            }
             Text(
                 text = stringResource(R.string.label_sub_title_text),
                 textAlign = TextAlign.Center,
@@ -127,57 +126,112 @@ fun MainHomeTabContent(
                     .padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    CountryCodeButton(
-                        countryCode = state.countryCode,
-                        onClick = {
-                            onIntent(MainHomeTabIntent.OpenCountryCodeBottomSheet)
-                        },
-                        expanded = state.isChoosingCountryCode,
-                        modifier = Modifier
-                            .defaultMinSize(minHeight = OutlinedTextFieldDefaults.MinHeight)
-                            .weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    MainPhoneTextField(
-                        phoneTextFieldState = phoneTextState,
-                        modifier = Modifier.weight(2f)
-                    )
-                }
-                OutlinedButton(
-                    onClick = {
-                        onIntent(
-                            MainHomeTabIntent.PhoneSubmission(
-                                countryCode = state.countryCode,
-                                phone = phoneTextState.text
-                            )
+            MainPhoneInput(
+                state = state,
+                onClickCountryCodeChooser = {
+                    onIntent(MainHomeTabIntent.OpenCountryCodeBottomSheet)
+                },
+                onClickSubmitPhone = { phone ->
+                    onIntent(
+                        MainHomeTabIntent.PhoneSubmission(
+                            countryCode = state.countryCode,
+                            phone = phone
                         )
-                    },
-                    enabled = phoneTextState.text.isNotBlank(),
-                    border = null,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                        disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                        disabledContentColor = MaterialTheme.colorScheme.surfaceBright
-                    ),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                ) {
-                    Text(text = stringResource(R.string.label_open_whatsapp))
+                    )
                 }
-            }
+            )
         }
     )
+}
+
+@Composable
+fun MainPhoneInput(
+    state: MainHomeTabState,
+    onClickCountryCodeChooser: () -> Unit,
+    onClickSubmitPhone: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val phoneTextState by remember {
+        mutableStateOf(PhoneTextFieldState())
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        MainPhoneInputField(
+            phoneTextState = phoneTextState,
+            countryCode = state.countryCode,
+            isChoosingCountryCode = state.isChoosingCountryCode,
+            onClickCountryCodeChooser = onClickCountryCodeChooser,
+            onImeAction = {
+                keyboardController?.hide()
+            }
+        )
+        MainPhoneSubmitButton(
+            onClick = {
+                keyboardController?.hide()
+                onClickSubmitPhone(phoneTextState.text)
+            },
+            enabled = phoneTextState.text.isNotBlank(),
+            modifier = modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun MainPhoneInputField(
+    phoneTextState: PhoneTextFieldState,
+    countryCode: CountryCodePresentationModel,
+    isChoosingCountryCode: Boolean,
+    onClickCountryCodeChooser: () -> Unit,
+    onImeAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        CountryCodeButton(
+            countryCode = countryCode,
+            onClick = onClickCountryCodeChooser,
+            expanded = isChoosingCountryCode,
+            modifier = Modifier
+                .defaultMinSize(minHeight = OutlinedTextFieldDefaults.MinHeight)
+                .weight(1f)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        MainPhoneTextField(
+            phoneTextFieldState = phoneTextState,
+            onImeAction = onImeAction,
+            modifier = Modifier.weight(2f)
+        )
+    }
+}
+
+@Composable
+fun MainPhoneSubmitButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = false
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        border = null,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+            disabledContentColor = MaterialTheme.colorScheme.surfaceBright
+        ),
+        modifier = modifier
+    ) {
+        Text(text = stringResource(R.string.label_open_whatsapp))
+    }
 }
 
 @Preview

@@ -1,5 +1,6 @@
 package com.aldyaz.wadirect.ui.common.textfield
 
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,10 +17,12 @@ fun PhoneTextField(
     label: String = stringResource(R.string.label_phone_field_placeholder),
     showError: Boolean = false,
     errorText: String? = null,
+    onImeAction: (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(
         keyboardType = KeyboardType.Phone,
         imeAction = ImeAction.Done
     ),
+    keyboardActions: KeyboardActions = KeyboardActions { onImeAction?.invoke() },
     isError: Boolean = false
 ) = BaseTextField(
     modifier = modifier,
@@ -29,5 +32,6 @@ fun PhoneTextField(
     showError = showError,
     errorText = errorText,
     keyboardOptions = keyboardOptions,
+    keyboardActions = keyboardActions,
     isError = isError
 )

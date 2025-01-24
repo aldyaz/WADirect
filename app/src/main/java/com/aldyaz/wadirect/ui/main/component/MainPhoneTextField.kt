@@ -17,6 +17,7 @@ import com.aldyaz.wadirect.ui.common.textfield.PhoneTextField
 @Composable
 fun MainPhoneTextField(
     phoneTextFieldState: PhoneTextFieldState,
+    onImeAction: () -> Unit,
     modifier: Modifier = Modifier,
     showError: Boolean = false,
     errorText: String? = null,
@@ -28,7 +29,8 @@ fun MainPhoneTextField(
         onValueChange = phoneTextFieldState::onValueChange,
         showError = showError,
         errorText = errorText,
-        isError = isError
+        isError = isError,
+        onImeAction = onImeAction
     )
 }
 
@@ -42,6 +44,7 @@ fun MainPhoneTextFieldPreview() {
                 isError = true,
                 showError = true,
                 errorText = "Error bang!",
+                onImeAction = {},
                 modifier = Modifier.fillMaxWidth()
             )
         }
