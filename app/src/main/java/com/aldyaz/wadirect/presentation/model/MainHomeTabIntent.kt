@@ -15,4 +15,6 @@ sealed class MainHomeTabIntent {
         val phone: String
     ) : MainHomeTabIntent()
 
+    data object OnConsumedPhoneSubmitEvent : MainHomeTabIntent()
+
 }

@@ -6,6 +6,8 @@ import com.aldyaz.wadirect.domain.interactor.FormatPhoneOnlyUseCase
 import com.aldyaz.wadirect.domain.interactor.GetPhoneCountryCodesUseCase
 import com.aldyaz.wadirect.domain.model.param.FormatPhoneParamDomainModel
 import com.aldyaz.wadirect.presentation.base.BaseViewModel
+import com.aldyaz.wadirect.presentation.base.StateEventWithContentConsumed
+import com.aldyaz.wadirect.presentation.base.StateEventWithContentTriggered
 import com.aldyaz.wadirect.presentation.mapper.CountryCodeToPresentationMapper
 import com.aldyaz.wadirect.presentation.model.MainHomeTabIntent
 import com.aldyaz.wadirect.presentation.model.MainHomeTabState
@@ -96,6 +98,14 @@ class MainHomeTabViewModel @Inject constructor(
                 }
                 cleanPhone(newState)
             }
+
+            is MainHomeTabIntent.OnConsumedPhoneSubmitEvent -> {
+                _state.update {
+                    it.copy(
+                        phoneSubmitEvent = StateEventWithContentConsumed
+                    )
+                }
+            }
         }
     }
 
@@ -108,7 +118,7 @@ class MainHomeTabViewModel @Inject constructor(
         ).collect { newPhone ->
             _state.update {
                 it.copy(
-                    cleanedPhone = newPhone
+                    phoneSubmitEvent = StateEventWithContentTriggered(newPhone)
                 )
             }
         }

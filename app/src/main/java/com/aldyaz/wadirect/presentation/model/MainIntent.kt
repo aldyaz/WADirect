@@ -6,4 +6,6 @@ sealed class MainIntent {
         val phone: String
     ) : MainIntent()
 
+    data object OnConsumedPhoneSubmitEvent : MainIntent()
+
 }

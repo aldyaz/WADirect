@@ -16,7 +16,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,7 +32,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aldyaz.wadirect.di.PlatformEntryPoint
+import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
+import com.aldyaz.wadirect.ui.common.effect.EventEffect
 import com.aldyaz.wadirect.ui.main.model.MainBottomNavTabPage
 import dagger.hilt.android.EntryPointAccessors
 
@@ -50,13 +51,18 @@ fun MainPage(
     }
     val whatsAppLaunchManager = platformEntryPoint?.whatsAppLaunchManager()
 
-    val phone by viewModel.phone.collectAsStateWithLifecycle()
+    val phoneSubmitEvent by viewModel.phoneSubmitEvent.collectAsStateWithLifecycle()
 
-    LaunchedEffect(phone) {
-        if (phone.isNotEmpty()) {
-            val isLaunched = whatsAppLaunchManager?.launch(phone)
-            Toast.makeText(activity, if (isLaunched == true) "Launched!" else "Not launched!", Toast.LENGTH_SHORT).show()
-        }
+    EventEffect(
+        event = phoneSubmitEvent,
+        onConsumed = { viewModel.onIntentReceived(MainIntent.OnConsumedPhoneSubmitEvent) }
+    ) { phone ->
+        val isLaunched = whatsAppLaunchManager?.launch(phone)
+        Toast.makeText(
+            activity,
+            if (isLaunched == true) "Launched!" else "Not launched!",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     MainScaffold(hiltViewModel())

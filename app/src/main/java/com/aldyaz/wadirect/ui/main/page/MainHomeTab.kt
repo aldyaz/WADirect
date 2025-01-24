@@ -24,7 +24,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +44,7 @@ import com.aldyaz.wadirect.presentation.model.MainHomeTabState
 import com.aldyaz.wadirect.presentation.model.MainIntent
 import com.aldyaz.wadirect.presentation.viewmodel.MainHomeTabViewModel
 import com.aldyaz.wadirect.presentation.viewmodel.MainViewModel
+import com.aldyaz.wadirect.ui.common.effect.EventEffect
 import com.aldyaz.wadirect.ui.common.model.PhoneTextFieldState
 import com.aldyaz.wadirect.ui.main.component.CountryCodeBottomSheet
 import com.aldyaz.wadirect.ui.main.component.CountryCodeButton
@@ -63,10 +63,11 @@ fun MainHomeTab(
     )
     val bottomSheetScope = rememberCoroutineScope()
 
-    LaunchedEffect(state.cleanedPhone) {
-        if (state.cleanedPhone.isNotEmpty()) {
-            sharedViewModel.onIntentReceived(MainIntent.LaunchWhatsApp(state.cleanedPhone))
-        }
+    EventEffect(
+        event = state.phoneSubmitEvent,
+        onConsumed = { viewModel.onIntentReceived(MainHomeTabIntent.OnConsumedPhoneSubmitEvent) }
+    ) { phone ->
+        sharedViewModel.onIntentReceived(MainIntent.LaunchWhatsApp(phone))
     }
 
     MainHomeTabContent(

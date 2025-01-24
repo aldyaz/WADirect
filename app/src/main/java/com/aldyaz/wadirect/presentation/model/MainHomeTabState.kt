@@ -1,5 +1,8 @@
 package com.aldyaz.wadirect.presentation.model
 
+import com.aldyaz.wadirect.presentation.base.StateEventWithContent
+import com.aldyaz.wadirect.presentation.base.StateEventWithContentConsumed
+
 data class MainHomeTabState(
     val loading: Boolean = true,
     val error: Boolean = false,
@@ -12,7 +15,7 @@ data class MainHomeTabState(
     ),
     val countryCodes: List<CountryCodePresentationModel> = listOf(),
     val phone: String = "",
-    val cleanedPhone: String = ""
+    val phoneSubmitEvent: StateEventWithContent<String> = StateEventWithContentConsumed
 ) {
 
     companion object {
