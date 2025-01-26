@@ -4,8 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.aldyaz.wadirect.ui.main.page.MainPage
-import com.aldyaz.wadirect.ui.common.WADirectTheme
+import com.aldyaz.wadirect.ui.WADirectApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,9 +15,7 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            WADirectTheme {
-                MainPage()
-            }
+            WADirectApp()
         }
     }
 

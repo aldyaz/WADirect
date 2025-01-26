@@ -22,7 +22,7 @@ import com.aldyaz.wadirect.R
 import com.aldyaz.wadirect.presentation.model.CountryCodePresentationModel
 
 @Composable
-fun CountryCodeButton(
+fun CountryCodeChooser(
     countryCode: CountryCodePresentationModel,
     onClick: () -> Unit,
     expanded: Boolean,
@@ -60,8 +60,8 @@ fun CountryCodeButton(
     heightDp = 100
 )
 @Composable
-fun CountryCodeButtonPreview() {
-    CountryCodeButton(
+fun CountryCodeChooserPreview() {
+    CountryCodeChooser(
         countryCode = CountryCodePresentationModel(
             name = "Afghanistan",
             dialCode = "+93",
