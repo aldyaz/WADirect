@@ -1,5 +1,6 @@
 package com.aldyaz.wadirect.ui.common.textfield
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -23,7 +24,8 @@ fun PhoneTextField(
         imeAction = ImeAction.Done
     ),
     keyboardActions: KeyboardActions = KeyboardActions { onImeAction?.invoke() },
-    isError: Boolean = false
+    isError: Boolean = false,
+    interactionSource: MutableInteractionSource? = null
 ) = BaseTextField(
     modifier = modifier,
     value = value,
@@ -33,5 +35,6 @@ fun PhoneTextField(
     errorText = errorText,
     keyboardOptions = keyboardOptions,
     keyboardActions = keyboardActions,
-    isError = isError
+    isError = isError,
+    interactionSource = interactionSource
 )

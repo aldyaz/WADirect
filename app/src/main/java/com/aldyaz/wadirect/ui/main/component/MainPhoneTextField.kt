@@ -2,6 +2,7 @@
 
 package com.aldyaz.wadirect.ui.main.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,7 +22,8 @@ fun MainPhoneTextField(
     modifier: Modifier = Modifier,
     showError: Boolean = false,
     errorText: String? = null,
-    isError: Boolean = false
+    isError: Boolean = false,
+    interactionSource: MutableInteractionSource? = null
 ) {
     PhoneTextField(
         modifier = modifier,
@@ -30,7 +32,8 @@ fun MainPhoneTextField(
         showError = showError,
         errorText = errorText,
         isError = isError,
-        onImeAction = onImeAction
+        onImeAction = onImeAction,
+        interactionSource = interactionSource
     )
 }
 

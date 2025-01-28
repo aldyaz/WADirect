@@ -4,6 +4,7 @@ package com.aldyaz.wadirect.ui.main.page
 
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -172,36 +174,37 @@ fun MainPhoneInput(
     onClickSubmitPhone: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val phoneTextState by remember { mutableStateOf(PhoneTextFieldState()) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val phoneTextState by remember {
-        mutableStateOf(PhoneTextFieldState())
-    }
+    val focusManager = LocalFocusManager.current
+
     Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        MainPhoneInputField(
-            phoneTextState = phoneTextState,
-            countryCode = state.countryCode,
-            isChoosingCountryCode = state.isChoosingCountryCode,
-            onClickCountryCodeChooser = onClickCountryCodeChooser,
-            onImeAction = {
-                keyboardController?.hide()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
-        MainPhoneSubmitButton(
-            onClick = {
-                keyboardController?.hide()
-                onClickSubmitPhone(phoneTextState.text)
-            },
-            enabled = phoneTextState.text.isNotBlank(),
-            modifier = modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp)
-        )
-    }
+        modifier = modifier.fillMaxWidth(),
+        content = {
+            MainPhoneInputField(
+                phoneTextState = phoneTextState,
+                countryCode = state.countryCode,
+                isChoosingCountryCode = state.isChoosingCountryCode,
+                onClickCountryCodeChooser = onClickCountryCodeChooser,
+                onImeAction = {
+                    keyboardController?.hide()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+            MainPhoneSubmitButton(
+                onClick = {
+                    focusManager.clearFocus()
+                    onClickSubmitPhone(phoneTextState.text)
+                },
+                enabled = phoneTextState.text.isNotBlank(),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
+        }
+    )
 }
 
 @Composable
@@ -211,7 +214,8 @@ fun MainPhoneInputField(
     isChoosingCountryCode: Boolean,
     onClickCountryCodeChooser: () -> Unit,
     onImeAction: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    interactionSource: MutableInteractionSource? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -229,6 +233,7 @@ fun MainPhoneInputField(
         MainPhoneTextField(
             phoneTextFieldState = phoneTextState,
             onImeAction = onImeAction,
+            interactionSource = interactionSource,
             modifier = Modifier.weight(2f)
         )
     }

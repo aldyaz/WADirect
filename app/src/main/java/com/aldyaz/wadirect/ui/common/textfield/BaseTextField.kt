@@ -1,12 +1,12 @@
 package com.aldyaz.wadirect.ui.common.textfield
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -33,7 +33,8 @@ fun BaseTextField(
     singleLine: Boolean = true,
     isError: Boolean = false,
     trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource? = null
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -56,7 +57,8 @@ fun BaseTextField(
             unfocusedIndicatorColor = colorResource(R.color._c0c2c3),
             unfocusedPlaceholderColor = colorResource(R.color._747a7f)
         ),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(8.dp),
+        interactionSource = interactionSource
     )
     if (showError && errorText != null) {
         Spacer(modifier = Modifier.height(4.dp))
