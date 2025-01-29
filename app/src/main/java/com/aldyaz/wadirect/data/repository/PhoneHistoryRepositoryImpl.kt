@@ -13,6 +13,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDate
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
 class PhoneHistoryRepositoryImpl(
@@ -29,16 +34,11 @@ class PhoneHistoryRepositoryImpl(
     }
 
     override fun savePhone(param: PhoneHistoryParamDomainModel): Flow<Unit> = flow {
-        val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        val currentDateString = currentDate.format(
-            LocalDate.Format {
-                year()
-                chars("-")
-                monthNumber()
-                chars("-")
-                dayOfMonth()
-            }
-        )
+        val utcTimeZone = TimeZone.UTC
+        val currentDateTime = Clock.System.now().toLocalDateTime(utcTimeZone)
+        val currentDateString = currentDateTime
+            .toInstant(utcTimeZone)
+            .format(DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET)
         phoneHistoryLocalDataSource.savePhone(
             HistoryDb(
                 countryCode = param.dialCode,

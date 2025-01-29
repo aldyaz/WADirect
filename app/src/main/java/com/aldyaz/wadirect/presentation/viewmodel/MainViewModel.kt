@@ -74,7 +74,7 @@ class MainViewModel @Inject constructor(
             dialCode = state.countryCode.dialCode,
             phone = state.phone
         )
-        formatPhoneOnlyUseCase(param)/*.flatMapLatest { phone ->
+        formatPhoneOnlyUseCase(param).flatMapLatest { phone ->
             savePhoneToHistoryUseCase(
                 PhoneHistoryParamDomainModel(
                     dialCode = param.dialCode,
@@ -83,7 +83,7 @@ class MainViewModel @Inject constructor(
             ).flatMapLatest {
                 flowOf(phone)
             }
-        }*/.collect { newPhone ->
+        }.collect { newPhone ->
             _state.update {
                 it.copy(
                     phoneSubmitEvent = StateEventWithContentTriggered(newPhone)
