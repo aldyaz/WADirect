@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.aldyaz.wadirect.ui.common.WADirectTheme
-import com.aldyaz.wadirect.ui.main.page.HistoryPage
+import com.aldyaz.wadirect.ui.main.page.HistoryListPage
 import com.aldyaz.wadirect.ui.main.page.HistoryScreen
 import com.aldyaz.wadirect.ui.main.page.MainPage
 import com.aldyaz.wadirect.ui.main.page.MainScreen
@@ -25,11 +25,15 @@ fun AppNavigation() {
         startDestination = MainScreen
     ) {
         composable<MainScreen> {
-            MainPage()
+            MainPage(
+                onClickHistory = {
+                    navController.navigate(HistoryScreen)
+                }
+            )
         }
 
         composable<HistoryScreen> {
-            HistoryPage()
+            HistoryListPage()
         }
     }
 }

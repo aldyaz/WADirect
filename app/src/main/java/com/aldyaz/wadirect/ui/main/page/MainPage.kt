@@ -16,15 +16,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,6 +63,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainPage(
+    onClickHistory: () -> Unit,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val activity = LocalActivity.current
@@ -79,6 +85,7 @@ fun MainPage(
 
     MainScaffold(
         state = state,
+        onClickHistory = onClickHistory,
         onIntent = viewModel::onIntentReceived
     )
 }
@@ -86,6 +93,7 @@ fun MainPage(
 @Composable
 private fun MainScaffold(
     state: MainState,
+    onClickHistory: () -> Unit,
     onIntent: (MainIntent) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
@@ -93,13 +101,30 @@ private fun MainScaffold(
     )
     val bottomSheetScope = rememberCoroutineScope()
 
-    Scaffold { contentPadding ->
-        MainContent(
-            state = state,
-            onIntent = onIntent,
-            modifier = Modifier.padding(contentPadding)
-        )
-    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(R.string.app_name))
+                },
+                actions = {
+                    IconButton(onClick = onClickHistory) {
+                        Icon(
+                            imageVector = Icons.Filled.History,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        },
+        content = { contentPadding ->
+            MainContent(
+                state = state,
+                onIntent = onIntent,
+                modifier = Modifier.padding(contentPadding)
+            )
+        }
+    )
 
     if (state.isChoosingCountryCode) {
         ModalBottomSheet(
