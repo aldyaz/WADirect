@@ -5,4 +5,5 @@
     <string name="label_open_whatsapp">Open WhatsApp</string>
     <string name="label_home">Home</string>
     <string name="label_history">History</string>
+    <string name="label_sent_histories">Sent Histories</string>
 </resources>

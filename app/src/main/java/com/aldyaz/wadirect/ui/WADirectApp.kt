@@ -33,7 +33,9 @@ fun AppNavigation() {
         }
 
         composable<HistoryScreen> {
-            HistoryListPage()
+            HistoryListPage(
+                onNavigateUp = navController::navigateUp
+            )
         }
     }
 }
