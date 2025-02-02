@@ -3,6 +3,8 @@ package com.aldyaz.wadirect.presentation.viewmodel
 import androidx.lifecycle.viewModelScope
 import com.aldyaz.wadirect.domain.interactor.GetSentHistoriesUseCase
 import com.aldyaz.wadirect.presentation.base.BaseViewModel
+import com.aldyaz.wadirect.presentation.base.StateEventWithContentConsumed
+import com.aldyaz.wadirect.presentation.base.StateEventWithContentTriggered
 import com.aldyaz.wadirect.presentation.model.HistoryListIntent
 import com.aldyaz.wadirect.presentation.model.HistoryListState
 import com.aldyaz.wadirect.presentation.model.HistoryPresentationModel
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,5 +42,22 @@ class HistoryListViewModel @Inject constructor(
     )
 
     override fun onIntentReceived(intent: HistoryListIntent) {
+        when (intent) {
+            is HistoryListIntent.ItemClick -> {
+                _state.update {
+                    it.copy(
+                        itemClickEvent = StateEventWithContentTriggered(intent.phone)
+                    )
+                }
+            }
+
+            is HistoryListIntent.OnConsumedItemClickEvent -> {
+                _state.update {
+                    it.copy(
+                        itemClickEvent = StateEventWithContentConsumed
+                    )
+                }
+            }
+        }
     }
 }
